@@ -2,15 +2,42 @@
 <html lang="en">
 <head>
    <meta charset="UTF-8">
-   <title>reminduh</title>
+   <title>hivemind</title>
    <link rel="stylesheet" href="css/hivemind.css">
    <script src="js/jquery.js"></script>
    <script src="js/objects.js"></script>
    <script src="js/methods.js"></script>
+   <script src="js/hivemind.js"></script>
 </head>
 <body>
-
    <h1>hivemind</h1>
-
+   <div class="hivemind-wrapper">
+      <h3>Population stats</h3>
+      <div class="count-wrapper" id="queenCount">
+         <span class="name">Queens: </span>
+         <span class="count">0</span>
+      </div>
+      <div class="count-wrapper" id="droneCount">
+         <span class="name">Drones: </span>
+         <span class="count">0</span>
+      </div>
+      <div class="count-wrapper" id="workerCount">
+         <span class="name">Workers: </span>
+         <span class="count">0</span>
+      </div>
+      <h3>Resource stats</h3>
+         <div class="count-wrapper" id="honeyCount">
+            <span class="name">Honey: </span>
+            <span class="count">0</span>
+         </div>
+         <div class="count-wrapper" id="territoryCount">
+            <span class="name">Territory: </span>
+            <span class="count">0</span>
+         </div>
+         <div class="count-wrapper" id="healthCount">
+            <span class="name">Health: </span>
+            <span class="count">0</span>
+         </div>
+   </div>
 </body>
 </html>
