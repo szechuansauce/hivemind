@@ -1,22 +1,31 @@
-//Set up the Hive Prototype
+//this file to define the persistent object prototypes
+
+//global game model
+function hivemind() {
+   this.name = 'Hivemind';
+   this.isPaused = false;
+   this.season = 'Summer';
+   this.seasonProgress = 0;
+}
+//convert game proto to obj
+$game = new hivemind();
+
+//global hive model
 function hiveModel() {
    //variables
    this.name = 'Hive';
    this.cost = 10000;
    this.population = 0;
+   this.populationMax = 10000;
    this.honey = 1000;
    this.territory = 0;
-   this.health = 0;
-   this.queenCount = 0;
+   this.health = 98;
+   this.queenCount = 1;
    this.droneCount = 0;
-   this.workerCount = 0;
-   //methods
-   this.getHoney = function() {
-      console.log(this.honey);
-   };
+   this.workerCount = 1;
 }
 
-//convert prototype to obj for use
+//convert hive proto to obj
 $hive = new hiveModel();
 
 //Set up the Bee Prototype

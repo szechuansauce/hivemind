@@ -7,37 +7,114 @@
    <script src="js/jquery.js"></script>
    <script src="js/objects.js"></script>
    <script src="js/methods.js"></script>
-   <script src="js/hivemind.js"></script>
+   <script src="js/interface.js"></script>
+   <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700" rel="stylesheet">
+   <script src="https://use.fontawesome.com/26aaf68a64.js"></script>
 </head>
 <body>
-   <h1>hivemind</h1>
+
    <div class="hivemind-wrapper">
-      <h3>Population stats</h3>
-      <div class="count-wrapper" id="queenCount">
-         <span class="name">Queens: </span>
-         <span class="count">0</span>
-      </div>
-      <div class="count-wrapper" id="droneCount">
-         <span class="name">Drones: </span>
-         <span class="count">0</span>
-      </div>
-      <div class="count-wrapper" id="workerCount">
-         <span class="name">Workers: </span>
-         <span class="count">0</span>
-      </div>
-      <h3>Resource stats</h3>
-         <div class="count-wrapper" id="honeyCount">
-            <span class="name">Honey: </span>
-            <span class="count">0</span>
+
+      <h1><i class="fa fa-tint" aria-hidden="true"></i> hivemind</h1>
+
+      <div class="statistics-wrapper">
+         <div class="statistics">
+            <h2>Hive Statistics</h2>
+            <h3>Population</h3>
+            <div class="count-wrapper" id="queenCount">
+               <span class="name">Queens: </span>
+               <span class="count"></span>
+            </div>
+            <div class="count-wrapper" id="droneCount">
+               <span class="name">Drones: </span>
+               <span class="count"></span>
+            </div>
+            <div class="count-wrapper" id="workerCount">
+               <span class="name">Workers: </span>
+               <span class="count"></span>
+            </div>
+            <div class="count-wrapper" id="populationCount">
+               <span class="name">Total bees: </span>
+               <span class="count"></span>
+            </div>
+            <h3>Resources</h3>
+            <div class="count-wrapper" id="honeyCount">
+               <span class="name">Honey: </span>
+               <span class="count"></span>
+            </div>
+            <div class="count-wrapper" id="territoryCount">
+               <span class="name">Territory: </span>
+               <span class="count"></span>
+            </div>
+            <div class="count-wrapper" id="healthCount">
+               <span class="name">Health: </span>
+               <span class="count"></span>
+            </div>
+            <h3>Other</h3>
+            <div class="count-wrapper" id="seasonCount">
+               <span class="name">Current Season: </span>
+               <span class="count"></span>
+            </div>
          </div>
-         <div class="count-wrapper" id="territoryCount">
-            <span class="name">Territory: </span>
-            <span class="count">0</span>
+      </div>
+
+      <div class="actions-wrapper">
+         <div class="actions">
+            <h2>Hive Control Panel</h2>
+            <h3>Create Bees (costs honey)</h3>
+            <div class="count-wrapper" id="queenCount">
+               <div class="button" data-beetype="" data-beeamount="1" data-beecost=""><i class="fa fa-plus" aria-hidden="true"></i> Queen</div>
+            </div>
+            <div class="count-wrapper" id="droneCount">
+               <div class="button" data-beetype="" data-beeamount="1" data-beecost=""><i class="fa fa-plus" aria-hidden="true"></i> Drone</div>
+            </div>
+            <div class="count-wrapper" id="workerCount">
+               <div class="button" data-beetype="worker" data-beeamount="1" data-beecost="10"><i class="fa fa-plus" aria-hidden="true"></i> Worker</div>
+            </div>
          </div>
-         <div class="count-wrapper" id="healthCount">
-            <span class="name">Health: </span>
-            <span class="count">0</span>
-         </div>
+      </div>
+
+      <div class="help-wrapper">
+         <h2>Help</h2>
+         <h3>What is this?</h3>
+         <p>This is hivemind, a bee hive simulation game.</p>
+         <h3>What do I do?</h3>
+         <p>You control the hive's population and resource use, determining what types of bees are created and what the hive's priorities are.</p>
+         <p>Time passes quickly, with a single season rolling by every few minutes.</p>
+         <h3>What do the different bees do?</h3>
+         <strong>The Queen</strong>
+         <p>You only ever need one Queen. She lives for a few years, and will facilitate the creation of other bees.</p>
+         <strong>The Drones</strong>
+         <p>Your Queen's sex partners. That's literally all they do. Male bees are kinda shit. The more drones you have alive, the higher total population your hive can have.</p>
+         <strong>The Workers</strong>
+         <p>The female working force of the hive. Workers don't reproduce, but they do everything else: gather honey, fight other colonies, and maintain the hive. These activities translate to the total honey, territory, and health of your hive.</p>
+         <p>To begin, you'll only be able to make basic Workers that do everything to a basic standard, but as your hive grows stronger you'll be able to create Specialist Workers who can only do one task, but excel at it.</p>
+         <h3>What do my resources do?</h3>
+         <strong>Honey</strong>
+         <p>Honey is used to create new bees. The numbers on their create buttons is how much honey it costs to make one.</p>
+         <p>All bees also consume honey while they're alive, so it's important to make sure that you're bringing in more honey than you're consuming.</p>
+         <strong>Territory</strong>
+         <p>Your hive needs to establish territory against other hives, so that it has reliable access to flowers. The more territory you have, the faster your workers will gather honey.</p>
+         <strong>Health</strong>
+         <p>Your hive needs to be kept clean, new honeycomb built, and the pupae and larvae looked after. The healthier your hive is, the faster you can create new bees. Larger populations will drain health faster.</p>
+         <h3>What's the go with the seasons?</h3>
+         <p>In Spring and Summer, all of your bees have optimal health, and your Queen's fertility is at it's best. Your maximum population will be higher.</p>
+         <p>In Autumn and Winter, your maximum population will decrease and some of your bees will die off, especially the Drones.</p>
+         <p>It's important to stockpile honey leading into Autumn, and don't focus too much on gathering honey, conquering territory, or creating new Drones in the cold months. General workers and health specialist workers are your best friends here.</p>
+      </div>
+
+      <span class="button" id="helpMe"><i class="fa fa-question" aria-hidden="true"></i></span>
+      <span class="button" id="pauseMe"></span>
+
+      <div class="message-wrapper">
+         <span class="message" id="messageTarget"></span>
+      </div>
+
    </div>
+
+   <div class="loading-wrapper" id="loadingWrapper">
+      <i class="fa fa-circle-o-notch fa-spin" aria-hidden="true"></i>
+   </div>
+
 </body>
 </html>
