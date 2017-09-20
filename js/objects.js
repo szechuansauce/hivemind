@@ -19,10 +19,13 @@ function hiveModel() {
    this.populationMax = 10000;
    this.honey = 1000;
    this.territory = 0;
-   this.health = 98;
+   this.health = 100;
    this.queenCount = 1;
    this.droneCount = 0;
-   this.workerCount = 1;
+   this.workerCount = 0;
+   this.eggCount = 5;
+   this.experience = 0;
+   this.experienceLevel = 1;
 }
 
 //convert hive proto to obj
