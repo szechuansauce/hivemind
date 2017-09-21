@@ -15,16 +15,16 @@ body {
    transition-delay: 1s;
 }
 body.summer {
-   background: yellow;
+   background: #e2dda2;
 }
 body.autumn {
-   background: orange;
+   background: #d1a990;
 }
 body.winter {
-   background: blue;
+   background: #a3b3cc;
 }
 body.spring {
-   background: green;
+   background: #add2b0;
 }
 
 * {
@@ -79,6 +79,11 @@ h1 {
    margin-bottom: 10px;
    cursor: pointer;
    transition: all .08s ease-out;
+}
+.button .bee-cost {
+   opacity: 0.7;
+   font-size: 14px;
+   padding-left: 3px;
 }
 .button:hover {
    background: black;
@@ -167,4 +172,25 @@ h1 {
    background: black;
    color: white;
    font-size: 60px;
+}
+
+/*     paused overrides */
+body.paused {
+   background: #fff;
+   transition: all 0s;
+}
+body.paused * {
+   pointer-events: none !important;
+}
+body.paused .statistics,
+body.paused .actions,
+body.paused .message {
+   opacity: 0.5;
+}
+body.paused h1:after {
+   content: ' - paused';
+}
+body.paused #pauseMe {
+   opacity: 1;
+   pointer-events: auto !important;
 }

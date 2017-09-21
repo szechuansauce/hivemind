@@ -16,6 +16,23 @@
 
 $( document ).ready(function() {
 
+   //send each bee's data to the DOM
+   //takes input of a bee object, maps to the appropriate data-ids on a dom element
+   function mapBeeDataToDOM(bee) {
+      var $DOMReference = bee.DOMReference,
+      $DOMTarget = $(".actions").find("[data-beetype='" + $DOMReference + "']"),
+      $cost = bee.cost + '';
+
+      $DOMTarget.append('<span class="bee-cost">(' + $cost + ')</span>');
+      $DOMTarget.attr('data-beecost', $cost);
+      $DOMTarget.addClass($cost);
+      console.log($cost);
+      console.log($DOMTarget);
+   }
+   mapBeeDataToDOM($queenBee);
+   mapBeeDataToDOM($droneBee);
+   mapBeeDataToDOM($workerBee);
+
    //update the game's current message (chains to existing, similar to chrome console)
    var $lastMessage,
        $repeatCount = 0;
@@ -43,12 +60,6 @@ $( document ).ready(function() {
    $('#pauseMe').on( "click", function() {
       pauseUnpause();
    });
-   $(window).keypress(function (e) {
-     if (e.keyCode === 0 || e.keyCode === 32) {
-       e.preventDefault()
-       pauseUnpause();
-     }
-   })
    function pauseUnpause() {
       //var
       var $button = $('#pauseMe');
@@ -60,11 +71,13 @@ $( document ).ready(function() {
          $game.isPaused = false;
          updateMessage('Unpaused');
          masterTimer();
+         $('body').removeClass('paused');
          setTimeout(pauseButton_pauseHTML, 1000);
       //if time running, pause and don't run timer
       } else {
          $game.isPaused = true;
          updateMessage('Paused');
+         $('body').addClass('paused');
          setTimeout(pauseButton_playHTML, 1000);
       }
    }
@@ -92,7 +105,17 @@ $( document ).ready(function() {
       $total = ($hive.queenCount + $hive.droneCount + $hive.workerCount);
       $hive.population = $total;
    }
-   //update the counters (bee counts next to bee types)
+   //utility function to round down to nearest whole number
+   function roundDown(number) {
+      return Math.floor(number);
+   }
+   function roundToFirstDecimalPlace(number) {
+      var $number = (number * 10);
+      Math.floor($number);
+      $number = ($number / 10);
+      return $number;
+   }
+   //update the counters (bee/resource counts next to bee/resource types)
    function updateBeeCounters() {
       var $queenCount = $('#queenCount .count'),
           $droneCount = $('#droneCount .count'),
@@ -107,17 +130,17 @@ $( document ).ready(function() {
           $experienceLevelCount = $('#experienceLevelCount .count')
       //methods
       calculateTotalPopulation();
-      $queenCount.html($hive.queenCount);
-      $droneCount.html($hive.droneCount);
-      $workerCount.html($hive.workerCount);
-      $eggCount.html($hive.eggCount);
-      $populationCount.html($hive.population);
-      $honeyCount.html($hive.honey);
-      $territoryCount.html($hive.territory);
-      $healthCount.html($hive.health);
+      $queenCount.html(roundDown($hive.queenCount));
+      $droneCount.html(roundDown($hive.droneCount));
+      $workerCount.html(roundDown($hive.workerCount));
+      $eggCount.html(roundDown($hive.eggCount) + ' (+' + roundToFirstDecimalPlace($hive.eggRate) + ')');
+      $populationCount.html(roundDown($hive.population));
+      $honeyCount.html(roundDown($hive.honey) + ' (+' + roundToFirstDecimalPlace($hive.honeyRate) + ')');
+      $territoryCount.html(roundDown($hive.territory) + ' (+' + roundToFirstDecimalPlace($hive.territoryRate) + ')');
+      $healthCount.html(roundDown($hive.health) + ' (+' + roundToFirstDecimalPlace($hive.healthRate) + ')');
       $seasonCount.html($game.season);
-      $experienceCount.html($hive.experience);
-      $experienceLevelCount.html($hive.experienceLevel);
+      $experienceCount.html(roundDown($hive.experience));
+      $experienceLevelCount.html(roundDown($hive.experienceLevel));
    }
    //update the hive's finances - function for each type then called together
    //multiplier = factor based upon number of workers currently influencing the type
@@ -140,14 +163,19 @@ $( document ).ready(function() {
          $hive.health = 100;
       }
    }
+   function updateEggs(amount) {
+      $hive.eggCount += amount;
+   }
    //this function used to update all finances based on bee activity per second
    function updateAllFinances() {
-      $honeyRate = (($hive.workerCount) * 0.25);
-      $territoryRate = (($hive.workerCount) * 0.25);
-      $healthRate = (($hive.workerCount) * 0.25);
-      updateHoney($honeyRate);
-      updateTerritory($territoryRate);
-      updateHealth($healthRate);
+      $hive.honeyRate = ($hive.workerCount * $workerBee.honeyRate);
+      $hive.territoryRate = ($hive.workerCount * $workerBee.territoryRate);
+      $hive.healthRate = ($hive.workerCount * $workerBee.healthRate);
+      $hive.eggRate = ($hive.droneCount * $droneBee.eggRate);
+      updateHoney($hive.honeyRate);
+      updateTerritory($hive.territoryRate);
+      updateHealth($hive.healthRate);
+      updateEggs($hive.eggRate);
    }
    //create a new bee on button click. take html id as a parameter. the element should have data-beetype, data-beeamount, data-beecost attributes to use.
    function createBee(button) {
@@ -157,7 +185,7 @@ $( document ).ready(function() {
       $cost = $this.data('beecost');
       $message = $amount + ' ' + $type + ' created.';
       if ($cost && $amount && $type) {
-         if ($hive.eggCount > 0) {
+         if ($hive.eggCount >= 1) {
             if ($cost < $hive.honey) {
                //subtract cost from honey
                $hive.honey = ($hive.honey - $cost);
@@ -166,7 +194,6 @@ $( document ).ready(function() {
                   $hive.workerCount += $amount;
                } else if ($type == 'drone') {
                   $hive.droneCount += $amount;
-                  updateMessage('drone type');
                } else if ($type == 'queen') {
                   $hive.queenCount += $amount;
                } else {return false;}
@@ -227,6 +254,7 @@ $( document ).ready(function() {
    //update all counters and finances on start
    updateBeeCounters();
    updateAllFinances();
+   refreshSeasons();
    //pause the game initially
    pauseUnpause();
    //the update master method
