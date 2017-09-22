@@ -22,10 +22,10 @@ $( document ).ready(function() {
       var $DOMReference = bee.DOMReference,
       $DOMTarget = $(".actions").find("[data-beetype='" + $DOMReference + "']"),
       $cost = bee.cost + '';
-
+      $exp = bee.experienceValue;
       $DOMTarget.append('<span class="bee-cost">(' + $cost + ')</span>');
       $DOMTarget.attr('data-beecost', $cost);
-      $DOMTarget.addClass($cost);
+      $DOMTarget.attr('data-exp', $exp);
       console.log($cost);
       console.log($DOMTarget);
    }
@@ -127,7 +127,7 @@ $( document ).ready(function() {
           $territoryCount = $('#territoryCount .count'),
           $healthCount = $('#healthCount .count'),
           $experienceCount = $('#experienceCount .count'),
-          $experienceLevelCount = $('#experienceLevelCount .count')
+          $levelCount = $('#levelCount .count')
       //methods
       calculateTotalPopulation();
       $queenCount.html(roundDown($hive.queenCount));
@@ -140,20 +140,39 @@ $( document ).ready(function() {
       $healthCount.html(roundDown($hive.health) + ' (+' + roundToFirstDecimalPlace($hive.healthRate) + ')');
       $seasonCount.html($game.season);
       $experienceCount.html(roundDown($hive.experience));
-      $experienceLevelCount.html(roundDown($hive.experienceLevel));
+      $levelCount.html(roundDown($hive.level));
+   }
+   //check hive exp progress, level the hive up if required and reset progress to 0
+   function checkHiveExp() {
+      var $exp = $hive.experience,
+      $expReq = $hive.experienceRequirement;
+      if ($exp >= $expReq) {
+         $hive.level += 1;
+         $hive.experience = 0;
+         $hive.experienceRequirement = ($expReq * 1.35);
+         updateMessage('Your hive has hit level ' + $hive.level + '!');
+      }
+   }
+   //util function to add experience for any rate addition - takes amount and cuts it down
+   function addExperience(source) {
+      var $expValue = (source / 10);
+      $hive.experience += $expValue;
    }
    //update the hive's finances - function for each type then called together
    //multiplier = factor based upon number of workers currently influencing the type
    function updateHoney(amount) {
       $hive.honey += amount;
+      addExperience(amount);
    }
    function updateTerritory(amount) {
       $hive.territory += amount;
+      addExperience(amount);
    }
    function updateHealth(amount) {
       //if health less than 100, and adding amount still less, add amount
       if (($hive.health + amount) <= 100) {
          $hive.health += amount;
+         addExperience(amount);
       }
       //if amount will send health over 100, force to 100
       else if (($hive.health + amount) > 100) {
@@ -189,6 +208,7 @@ $( document ).ready(function() {
             if ($cost < $hive.honey) {
                //subtract cost from honey
                $hive.honey = ($hive.honey - $cost);
+               $hive.experience += $this.data('exp');
                //check bee type and add appropriately
                if ($type == 'worker') {
                   $hive.workerCount += $amount;
@@ -213,12 +233,23 @@ $( document ).ready(function() {
          return false;
       }
    }
+
+   //compare a progress to a max, calc the percentage progress, add max-width to bar
+   var $experienceBarInner = $('#experienceCount .progress-bar-inner');
+   function generatePercentage(progress, maximum, target) {
+      var $percentage = ((progress / maximum) * 100);
+      var $percentageString = ($percentage + '%');
+      //target.css('max-width', '50%');
+      target.css('max-width', $percentageString);
+   }
+   generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
+
    //monitor the seasons - watch and update game.season, controlled by game.seasonProgress
    function refreshSeasons() {
       //push the season progress forward
       $game.seasonProgress += 1;
       //check if season has finished (against arbitrary amount, change this to lengthen or shorten)
-      if ($game.seasonProgress > 5) {
+      if ($game.seasonProgress > 30) {
          $game.seasonProgress = 0;
          $body = $('body');
          switch($game.season) {
@@ -271,6 +302,8 @@ $( document ).ready(function() {
         setTimeout(masterTimer, 1000);
         refreshSeasons();
         calculateTotalPopulation();
+        checkHiveExp();
+        generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
      }
    }
 

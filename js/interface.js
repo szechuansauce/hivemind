@@ -6,7 +6,7 @@ $( document ).ready(function() {
    function removeLoadingWrapper() {
       $('#loadingWrapper').remove();
    }
-   setTimeout(removeLoadingWrapper, 1500);
+   setTimeout(removeLoadingWrapper, 1000);
 
    //show/hide help section on #helpMe button click
    $('#helpMe').on( "click", function() {

@@ -23,10 +23,12 @@ function hiveModel() {
    this.queenCount = 1;
    this.droneCount = 0;
    this.workerCount = 0;
-   this.eggCount = 5;
+   this.eggCount = 15;
    this.experience = 0;
-   this.experienceLevel = 1;
-   //rates
+   this.experienceRequirement = 15;
+   this.experiencePercentage = 0;
+   this.level = 1;
+   //generation rates
    this.honeyRate = 0;
    this.eggRate = 0;
    this.territoryRate = 0;
@@ -50,6 +52,8 @@ function beeModel() {
    this.territoryRate = 0;
    this.healthRate = 0;
    this.domTarget = '';
+   //experience value on build
+   this.experienceValue = 0;
    //methods
 }
 
@@ -66,6 +70,7 @@ $droneBee.cost = 250;
 $droneBee.gender = 'Male';
 $droneBee.eggRate = 0.1;
 $droneBee.DOMReference = 'drone';
+$droneBee.experienceValue = 5;
 
 // The Basic Worker - alternates between each of the possible worker jobs - honey, territory, health.
 $workerBee = new beeModel();
@@ -78,6 +83,7 @@ $workerBee.healthRate = 0.15;
 $workerBee.honeyRate = 0.5;
 $workerBee.territoryRate = 0.15;
 $workerBee.DOMReference = 'worker';
+$workerBee.experienceValue = 1;
 
 // The Honey Specialist Worker - Gathers Hive Honey Faster
 var $honeyWorkerBee = Object.create($workerBee);
