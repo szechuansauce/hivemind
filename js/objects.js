@@ -4,8 +4,8 @@
 function hivemind() {
    this.name = 'Hivemind';
    this.isPaused = false;
-   this.season = 'Autumn';
-   this.seasonProgress = 5;
+   this.season = 'Spring';
+   this.seasonProgress = 0;
 }
 //convert game proto to obj
 $game = new hivemind();
@@ -16,10 +16,10 @@ function hiveModel() {
    this.name = 'Hive';
    this.cost = 10000;
    this.population = 0;
-   this.populationMax = 10000;
+   this.populationMax = 100;
    this.honey = 750;
    this.territory = 0;
-   this.health = 60;
+   this.health = 75;
    this.maxHealth = 100;
    this.queenCount = 1;
    this.droneCount = 0;
@@ -83,9 +83,9 @@ $workerBee.cost = 50;
 $workerBee.canAddHoney = true;
 $workerBee.canAddTerritory = true;
 $workerBee.canAddHealth = true;
-$workerBee.healthRate = 0.15;
+$workerBee.healthRate = 0.09;
 $workerBee.honeyRate = 0.5;
-$workerBee.territoryRate = 0.15;
+$workerBee.territoryRate = 0.12;
 $workerBee.DOMReference = 'worker';
 $workerBee.experienceValue = 1;
 $workerBee.availableAmounts = [1, 5, 10];

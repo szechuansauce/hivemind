@@ -73,6 +73,7 @@ $( document ).ready(function() {
          updateMessage('Unpaused');
          masterTimer();
          $('body').removeClass('paused');
+         setSeasonToBody();
          setTimeout(pauseButton_pauseHTML, 1000);
       //if time running, pause and don't run timer
       } else {
@@ -135,7 +136,7 @@ $( document ).ready(function() {
       $droneCount.html(roundDown($hive.droneCount));
       $workerCount.html(roundDown($hive.workerCount));
       $eggCount.html(roundDown($hive.eggCount) + ' (+' + roundToFirstDecimalPlace($hive.eggRate) + ')');
-      $populationCount.html(roundDown($hive.population));
+      $populationCount.html(roundDown($hive.population) + '/' + $hive.populationMax);
       $honeyCount.html(roundDown($hive.honey) + ' (+' + roundToFirstDecimalPlace($hive.honeyRate) + ')');
       $territoryCount.html(roundDown($hive.territory) + ' (+' + roundToFirstDecimalPlace($hive.territoryRate) + ')');
       $healthCount.html(roundDown($hive.health) + '% (+' + roundToFirstDecimalPlace($hive.healthRate) + '%)');
@@ -149,7 +150,7 @@ $( document ).ready(function() {
       if ($exp >= $expReq) {
          $hive.level += 1;
          $hive.experience = 0;
-         $hive.experienceRequirement = ($expReq * 1.35);
+         $hive.experienceRequirement = ($expReq * 1.95);
          updateMessage('Your hive has hit level ' + $hive.level + '!');
       }
    }
@@ -182,25 +183,41 @@ $( document ).ready(function() {
       //if amount will send health over 100, force to 100
       else if (($hive.health + amount) > 100) {
          $hive.health = 100;
-      //shouldn't reach here, but otherwise force 100
-      } else {
-         $hive.health = 100;
+      }
+      //if going below 0, the hive has died.
+      else if (($hive.health + amount) <= 0) {
+         alert('your hive has died.')
       }
    }
    function updateEggs(amount) {
       $hive.eggCount += amount;
       addExperience(amount, 5);
    }
+   function updatePopulationMax() {
+      $popMax = ($hive.level * 3) + ($hive.territory * 0.1);
+      if ($popMax < 100) {
+         $popMax = 100;
+      }
+      $hive.populationMax = Math.floor($popMax);
+   }
    //this function used to update all finances based on bee activity per second
    function updateAllFinances() {
+      var $levelDifficultyMultiplier = (Math.abs(($hive.level / 3) - 100) / 100);
+      //stuff affected by winter
+      if ($game.season == 'Winter') {
+         $hive.healthRate = ((($hive.workerCount * $workerBee.healthRate) - ($hive.level * 0.25)) * $levelDifficultyMultiplier);
+      }
+      else {
+         $hive.healthRate = (($hive.workerCount * $workerBee.healthRate) * $levelDifficultyMultiplier);
+      };
       $hive.honeyRate = ($hive.workerCount * $workerBee.honeyRate);
       $hive.territoryRate = ($hive.workerCount * $workerBee.territoryRate);
-      $hive.healthRate = ($hive.workerCount * $workerBee.healthRate);
       $hive.eggRate = ($hive.droneCount * $droneBee.eggRate);
       updateHoney($hive.honeyRate);
       updateTerritory($hive.territoryRate);
       updateHealth($hive.healthRate);
       updateEggs($hive.eggRate);
+      updatePopulationMax();
    }
    //create a new bee on button click. take html id as a parameter. the element should have data-beetype, data-beeamount, data-beecost attributes to use.
    function createBee(button) {
@@ -210,7 +227,7 @@ $( document ).ready(function() {
       $cost = $this.data('beecost');
       $message = $amount + ' ' + $type + ' created.';
       if ($cost && $amount && $type) {
-         if ($hive.eggCount >= 1) {
+         if ($hive.eggCount >= $amount) {
             if ($cost < $hive.honey) {
                //subtract cost from honey
                $hive.honey = ($hive.honey - $cost);
@@ -226,7 +243,7 @@ $( document ).ready(function() {
                //send message informing of successful creation
                updateMessage($message);
                //spend an egg
-               $hive.eggCount -= 1;
+               $hive.eggCount -= $amount;
                updateBeeCounters();
             } else {
                updateMessage('Not enough honey!');
@@ -243,6 +260,7 @@ $( document ).ready(function() {
    //compare a progress to a max, calc the percentage progress, add max-width to bar
    var $experienceBarInner = $('#experienceCount .progress-bar-inner');
    var $healthBarInner = $('#healthCount .progress-bar-inner');
+   var $populationBarInner = $('#populationCount .progress-bar-inner');
    function generatePercentage(progress, maximum, target) {
       var $percentage = ((progress / maximum) * 100);
       var $percentageString = ($percentage + '%');
@@ -252,16 +270,21 @@ $( document ).ready(function() {
    function generateAllPercentages() {
       generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
       generatePercentage($hive.health, $hive.maxHealth, $healthBarInner);
+      generatePercentage($hive.population, $hive.populationMax, $populationBarInner);
    }
    generateAllPercentages();
 
    //monitor the seasons - watch and update game.season, controlled by game.seasonProgress
+   function setSeasonToBody() {
+      $season = $game.season.toLowerCase();
+      $('body').addClass($season);
+   }
    function refreshSeasons() {
       //push the season progress forward
       $game.seasonProgress += 1;
       //check if season has finished (against arbitrary amount, change this to lengthen or shorten)
       if ($game.seasonProgress > 45) {
-         $game.seasonProgress = 0;
+         $game.seasonProgress = 1;
          $body = $('body');
          switch($game.season) {
             case 'Summer':
@@ -270,12 +293,12 @@ $( document ).ready(function() {
                $body.addClass('autumn');
                break;
             case 'Autumn':
+               updateMessage('It\'s Winter. Prepare yourself...');
                $game.season = 'Winter';
                $body.removeClass();
                $body.addClass('winter');
                break;
             case 'Winter':
-               updateMessage('It\'s Winter. Bee death rates are going to rise...');
                $game.season = 'Spring';
                $body.removeClass();
                $body.addClass('spring');
@@ -288,8 +311,27 @@ $( document ).ready(function() {
          }
       }
    }
+   refreshSeasons();
 
-   //function to monitor the seasons and set bee death rates accordingly
+   //if hive health gets below 50%, kill off drones first and then the workers
+   function applyHealthRepurcussions() {
+      if ($hive.health < 100) {
+         $health = $hive.health;
+         $deaths = Math.floor(((Math.abs($health - 100)) * ($hive.level * 0.5)) / 50);
+         if ($hive.droneCount > Math.floor($deaths * 0.75)) {
+            $hive.droneCount -= Math.floor($deaths * 0.75);
+            $hive.workerCount -= Math.floor($deaths * 0.25);
+         } else if ($hive.workerCount > Math.floor($deaths)) {
+            $hive.droneCount = 0;
+            $hive.workerCount -= Math.floor($deaths);
+         } else {
+            $hive.droneCount = 0;
+            $hive.workerCount = 0;
+         }
+      } else {
+         return false;
+      }
+   }
 
 
 
@@ -318,6 +360,7 @@ $( document ).ready(function() {
         calculateTotalPopulation();
         checkHiveExp();
         generateAllPercentages();
+        applyHealthRepurcussions();
      }
    }
 

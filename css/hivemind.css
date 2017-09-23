@@ -201,6 +201,7 @@ body.paused #pauseMe {
    background: #1f1f1f;
    overflow: hidden;
    position: relative;
+   color: $white;
 }
 #experienceCount.progress-bar {
    position: fixed;
@@ -224,7 +225,8 @@ body.paused #pauseMe {
    background: #5cc958;
 }
 #levelCount,
-#healthCount .name {
+#healthCount .name,
+#populationCount .name {
    color: white;
    font-size: 16px;
    font-weight: bold;
