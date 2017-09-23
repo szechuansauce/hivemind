@@ -154,9 +154,14 @@ $( document ).ready(function() {
       }
    }
    //util function to add experience for any rate addition - takes amount and cuts it down
-   function addExperience(source) {
-      var $expValue = (source / 10);
-      $hive.experience += $expValue;
+   function addExperience(source, multiplier) {
+      if (multiplier) {
+         var $expValue = ((source / 10) * multiplier);
+         $hive.experience += $expValue;
+      } else {
+         var $expValue = (source / 10);
+         $hive.experience += $expValue;
+      }
    }
    //update the hive's finances - function for each type then called together
    //multiplier = factor based upon number of workers currently influencing the type
@@ -184,6 +189,7 @@ $( document ).ready(function() {
    }
    function updateEggs(amount) {
       $hive.eggCount += amount;
+      addExperience(amount, 5);
    }
    //this function used to update all finances based on bee activity per second
    function updateAllFinances() {
