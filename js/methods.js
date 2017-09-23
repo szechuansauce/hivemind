@@ -19,21 +19,22 @@ $( document ).ready(function() {
    //send each bee's data to the DOM
    //takes input of a bee object, maps to the appropriate data-ids on a dom element
    function mapBeeDataToDOM(bee) {
-      var $DOMReference = bee.DOMReference,
-      $DOMTarget = $(".actions").find("[data-beetype='" + $DOMReference + "']"),
-      $cost = bee.cost + '';
-      $exp = bee.experienceValue;
-      $DOMTarget.append('<span class="bee-cost">(' + $cost + ')</span>');
-      $DOMTarget.attr('data-beecost', $cost);
-      $DOMTarget.attr('data-exp', $exp);
-      console.log($cost);
-      console.log($DOMTarget);
+      var $DOMTarget = $('#' + (bee.DOMReference) + 'Button');
+      var $availableAmounts = bee.availableAmounts;
+      $singleCost = bee.cost;
+      //add a button for each available purchase amount
+      $availableAmounts.forEach(function(current_value, index, initial_array) {
+         $totalCost =  (current_value * $singleCost);
+         $exp = (current_value * bee.experienceValue);
+         var $buttonMarkup = '<div class="button" data-beetype="' + bee.DOMReference + '" data-beeamount="' + current_value +'" data-beecost="' + $totalCost + '" data-exp="' + $exp + '"><i class="fa fa-plus" aria-hidden="true"></i>' + ' ' + current_value + '<span class="bee-cost">(' + $totalCost + ')</span></div>';
+         $DOMTarget.append($buttonMarkup);
+      });
    }
    mapBeeDataToDOM($queenBee);
    mapBeeDataToDOM($droneBee);
    mapBeeDataToDOM($workerBee);
 
-   //update the game's current message (chains to existing, similar to chrome console)
+   //update the game's current message (chains to existing, reverse of chrome console)
    var $lastMessage,
        $repeatCount = 0;
    function updateMessage(message) {
@@ -137,9 +138,8 @@ $( document ).ready(function() {
       $populationCount.html(roundDown($hive.population));
       $honeyCount.html(roundDown($hive.honey) + ' (+' + roundToFirstDecimalPlace($hive.honeyRate) + ')');
       $territoryCount.html(roundDown($hive.territory) + ' (+' + roundToFirstDecimalPlace($hive.territoryRate) + ')');
-      $healthCount.html(roundDown($hive.health) + ' (+' + roundToFirstDecimalPlace($hive.healthRate) + ')');
+      $healthCount.html(roundDown($hive.health) + '% (+' + roundToFirstDecimalPlace($hive.healthRate) + '%)');
       $seasonCount.html($game.season);
-      $experienceCount.html(roundDown($hive.experience));
       $levelCount.html(roundDown($hive.level));
    }
    //check hive exp progress, level the hive up if required and reset progress to 0
@@ -242,20 +242,25 @@ $( document ).ready(function() {
 
    //compare a progress to a max, calc the percentage progress, add max-width to bar
    var $experienceBarInner = $('#experienceCount .progress-bar-inner');
+   var $healthBarInner = $('#healthCount .progress-bar-inner');
    function generatePercentage(progress, maximum, target) {
       var $percentage = ((progress / maximum) * 100);
       var $percentageString = ($percentage + '%');
       //target.css('max-width', '50%');
       target.css('max-width', $percentageString);
    }
-   generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
+   function generateAllPercentages() {
+      generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
+      generatePercentage($hive.health, $hive.maxHealth, $healthBarInner);
+   }
+   generateAllPercentages();
 
    //monitor the seasons - watch and update game.season, controlled by game.seasonProgress
    function refreshSeasons() {
       //push the season progress forward
       $game.seasonProgress += 1;
       //check if season has finished (against arbitrary amount, change this to lengthen or shorten)
-      if ($game.seasonProgress > 30) {
+      if ($game.seasonProgress > 45) {
          $game.seasonProgress = 0;
          $body = $('body');
          switch($game.season) {
@@ -270,6 +275,7 @@ $( document ).ready(function() {
                $body.addClass('winter');
                break;
             case 'Winter':
+               updateMessage('It\'s Winter. Bee death rates are going to rise...');
                $game.season = 'Spring';
                $body.removeClass();
                $body.addClass('spring');
@@ -282,6 +288,9 @@ $( document ).ready(function() {
          }
       }
    }
+
+   //function to monitor the seasons and set bee death rates accordingly
+
 
 
    /////////////////////////////////////////////////////////////////////////
@@ -302,14 +311,13 @@ $( document ).ready(function() {
      if ($game.isPaused) {
         return false;
      } else {
-        console.log('Counters updated.');
         updateBeeCounters();
         updateAllFinances();
         setTimeout(masterTimer, 1000);
         refreshSeasons();
         calculateTotalPopulation();
         checkHiveExp();
-        generatePercentage($hive.experience, $hive.experienceRequirement, $experienceBarInner);
+        generateAllPercentages();
      }
    }
 

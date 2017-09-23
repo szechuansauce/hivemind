@@ -4,7 +4,7 @@
 function hivemind() {
    this.name = 'Hivemind';
    this.isPaused = false;
-   this.season = 'Winter';
+   this.season = 'Autumn';
    this.seasonProgress = 5;
 }
 //convert game proto to obj
@@ -19,7 +19,8 @@ function hiveModel() {
    this.populationMax = 10000;
    this.honey = 750;
    this.territory = 0;
-   this.health = 100;
+   this.health = 60;
+   this.maxHealth = 100;
    this.queenCount = 1;
    this.droneCount = 0;
    this.workerCount = 0;
@@ -54,6 +55,8 @@ function beeModel() {
    this.domTarget = '';
    //experience value on build
    this.experienceValue = 0;
+   //available multiples to purchase
+   this.availableAmounts = [1];
    //methods
 }
 
@@ -71,6 +74,7 @@ $droneBee.gender = 'Male';
 $droneBee.eggRate = 0.1;
 $droneBee.DOMReference = 'drone';
 $droneBee.experienceValue = 5;
+$droneBee.availableAmounts = [1, 5];
 
 // The Basic Worker - alternates between each of the possible worker jobs - honey, territory, health.
 $workerBee = new beeModel();
@@ -84,6 +88,7 @@ $workerBee.honeyRate = 0.5;
 $workerBee.territoryRate = 0.15;
 $workerBee.DOMReference = 'worker';
 $workerBee.experienceValue = 1;
+$workerBee.availableAmounts = [1, 5, 10];
 
 // The Honey Specialist Worker - Gathers Hive Honey Faster
 var $honeyWorkerBee = Object.create($workerBee);

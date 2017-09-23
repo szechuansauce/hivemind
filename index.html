@@ -17,72 +17,50 @@
 
       <h1><i class="fa fa-tint" aria-hidden="true"></i> hivemind</h1>
 
-      <div class="statistics-wrapper">
-         <div class="statistics">
-            <h2>Hive Statistics</h2>
+      <div class="actions-wrapper">
+         <div class="actions">
             <h3>Population</h3>
             <div class="count-wrapper" id="queenCount">
-               <span class="name">Queens: </span>
-               <span class="count"></span>
+               <span class="name">Queens: <span class="count"></span></span>
+               <div id="queenButton">
+               </div>
             </div>
             <div class="count-wrapper" id="droneCount">
-               <span class="name">Drones: </span>
-               <span class="count"></span>
+               <span class="name">Drones: <span class="count"></span></span>
+               <div id="droneButton">
+               </div>
             </div>
             <div class="count-wrapper" id="workerCount">
-               <span class="name">Workers: </span>
-               <span class="count"></span>
+               <span class="name">Workers: <span class="count"></span></span>
+               <div id="workerButton">
+               </div>
             </div>
             <div class="count-wrapper" id="populationCount">
-               <span class="name">Total bees: </span>
-               <span class="count"></span>
+               <span class="name">Total bees: <span class="count"></span></span>
             </div>
             <h3>Resources</h3>
             <div class="count-wrapper" id="eggCount">
-               <span class="name">Eggs: </span>
-               <span class="count"></span>
+               <span class="name">Eggs: <span class="count"></span></span>
             </div>
             <div class="count-wrapper" id="honeyCount">
-               <span class="name">Honey: </span>
-               <span class="count"></span>
+               <span class="name">Honey: <span class="count"></span></span>
             </div>
             <div class="count-wrapper" id="territoryCount">
-               <span class="name">Territory: </span>
-               <span class="count"></span>
+               <span class="name">Territory: <span class="count"></span></span>
             </div>
-            <div class="count-wrapper" id="healthCount">
-               <span class="name">Health: </span>
-               <span class="count"></span>
+            <div class="count-wrapper progress-bar" id="healthCount">
+               <span class="name">Health: <span class="count"></span></span>
+               <div class="progress-bar-inner"></div>
             </div>
             <h3>Other</h3>
             <div class="count-wrapper" id="seasonCount">
-               <span class="name">Current Season: </span>
-               <span class="count"></span>
+               <span class="name">Current Season: <span class="count"></span></span>
             </div>
             <div class="count-wrapper progress-bar" id="experienceCount">
                <div class="progress-bar-inner"></div>
-               <span class="name">Hive Experience: </span>
-               <span class="count"></span>
             </div>
             <div class="count-wrapper" id="levelCount">
-               <span class="name">Hive Level: </span>
-               <span class="count"></span>
-            </div>
-         </div>
-      </div>
-
-      <div class="actions-wrapper">
-         <div class="actions">
-            <h2>Hive Control Panel</h2>
-            <h3>Create Bees (costs honey)</h3>
-            <div class="count-wrapper" id="queenButon">
-               <div class="button" data-beetype="queen" data-beeamount="1" data-beecost="" data-exp=""><i class="fa fa-plus" aria-hidden="true"></i> Queen</div>
-            </div>
-            <div class="count-wrapper" id="droneButton">
-               <div class="button" data-beetype="drone" data-beeamount="1" data-beecost="" data-exp=""><i class="fa fa-plus" aria-hidden="true"></i> Drone</div>
-            </div>
-            <div class="count-wrapper" id="workerButton">
-               <div class="button" data-beetype="worker" data-beeamount="1" data-beecost="" data-exp=""><i class="fa fa-plus" aria-hidden="true"></i> Worker</div>
+               <span class="name">Lvl<span class="count"></span></span>
             </div>
          </div>
       </div>
