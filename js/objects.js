@@ -24,6 +24,9 @@ function hiveModel() {
    this.queenCount = 1;
    this.droneCount = 0;
    this.workerCount = 0;
+   this.honeyWorkerCount = 0;
+   this.territoryWorkerCount = 0;
+   this.maintenanceWorkerCount = 0;
    this.eggCount = 15;
    this.experience = 0;
    this.experienceRequirement = 15;
@@ -80,9 +83,6 @@ $droneBee.availableAmounts = [1, 5];
 $workerBee = new beeModel();
 $workerBee.name = 'Worker';
 $workerBee.cost = 50;
-$workerBee.canAddHoney = true;
-$workerBee.canAddTerritory = true;
-$workerBee.canAddHealth = true;
 $workerBee.healthRate = 0.09;
 $workerBee.honeyRate = 0.5;
 $workerBee.territoryRate = 0.12;
@@ -91,22 +91,37 @@ $workerBee.experienceValue = 1;
 $workerBee.availableAmounts = [1, 5, 10];
 
 // The Honey Specialist Worker - Gathers Hive Honey Faster
-var $honeyWorkerBee = Object.create($workerBee);
-$honeyWorkerBee.name = 'Honey Worker';
-$honeyWorkerBee.cost = 50;
-$honeyWorkerBee.gender = 'Female';
-$honeyWorkerBee.canAddHoney = true;
-
-// The Maintenance Specialist Worker - Gathers Hive Territory Faster
-var $maintenanceWorkerBee = Object.create($workerBee);
-$maintenanceWorkerBee.name = 'Territory Worker';
-$maintenanceWorkerBee.cost = 50;
-$maintenanceWorkerBee.gender = 'Female';
-$maintenanceWorkerBee.canAddHealth = true;
+var   $honeyWorkerBee = Object.create($workerBee);
+      $honeyWorkerBee.workerMultiplier = 3;
+      $honeyWorkerBee.name = 'Honey Worker';
+      $honeyWorkerBee.cost = ($workerBee.cost * $honeyWorkerBee.workerMultiplier);
+      $honeyWorkerBee.healthRate = 0;
+      $honeyWorkerBee.honeyRate = ($workerBee.honeyRate * $honeyWorkerBee.workerMultiplier);
+      $honeyWorkerBee.territoryRate = 0;
+      $honeyWorkerBee.DOMReference = 'honeyWorker';
+      $honeyWorkerBee.experienceValue = ($workerBee.experienceValue * $honeyWorkerBee.workerMultiplier);
+      $honeyWorkerBee.availableAmounts = [1, 5, 10];
 
 // The Territory Specialist Worker - Gathers Hive Health Faster
-var $territoryWorkerBee = Object.create($workerBee);
-$territoryWorkerBee.name = 'Territory Worker';
-$territoryWorkerBee.cost = 50;
-$territoryWorkerBee.gender = 'Female';
-$territoryWorkerBee.canAddTerritory = true;
+var   $territoryWorkerBee = Object.create($workerBee);
+      $territoryWorkerBee.workerMultiplier = 5;
+      $territoryWorkerBee.name = 'Territory Worker';
+      $territoryWorkerBee.cost = ($workerBee.cost * $territoryWorkerBee.workerMultiplier);
+      $territoryWorkerBee.healthRate = 0;
+      $territoryWorkerBee.honeyRate = 0;
+      $territoryWorkerBee.territoryRate = ($workerBee.territoryRate * $territoryWorkerBee.workerMultiplier);
+      $territoryWorkerBee.DOMReference = 'territoryWorker';
+      $territoryWorkerBee.experienceValue = ($workerBee.experienceValue * $territoryWorkerBee.workerMultiplier);
+      $territoryWorkerBee.availableAmounts = [1, 5, 10];
+
+// The Maintenance Specialist Worker - Gathers Hive Territory Faster
+var   $maintenanceWorkerBee = Object.create($workerBee);
+      $maintenanceWorkerBee.workerMultiplier = 10;
+      $maintenanceWorkerBee.name = 'Maintenance Worker';
+      $maintenanceWorkerBee.cost = ($workerBee.cost * $maintenanceWorkerBee.workerMultiplier);
+      $maintenanceWorkerBee.healthRate = ($workerBee.healthRate * $maintenanceWorkerBee.workerMultiplier);
+      $maintenanceWorkerBee.honeyRate = 0;
+      $maintenanceWorkerBee.territoryRate = 0;
+      $maintenanceWorkerBee.DOMReference = 'maintenanceWorker';
+      $maintenanceWorkerBee.experienceValue = ($workerBee.experienceValue * $maintenanceWorkerBee.workerMultiplier);
+      $maintenanceWorkerBee.availableAmounts = [1, 5, 10];

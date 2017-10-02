@@ -104,7 +104,7 @@ $( document ).ready(function() {
    }
    //calculate total population of bees
    function calculateTotalPopulation() {
-      $total = ($hive.queenCount + $hive.droneCount + $hive.workerCount);
+      $total = ($hive.queenCount + $hive.droneCount + $hive.workerCount + $hive.honeyWorkerCount + $hive.territoryWorkerCount + $hive.maintenanceWorkerCount);
       $hive.population = $total;
    }
    //utility function to round down to nearest whole number
@@ -122,6 +122,9 @@ $( document ).ready(function() {
       var $queenCount = $('#queenCount .count'),
           $droneCount = $('#droneCount .count'),
           $workerCount = $('#workerCount .count'),
+          $honeyWorkerCount = $('#honeyWorkerCount .count'),
+          $territoryWorkerCount = $('#territoryWorkerCount .count'),
+          $maintenanceWorkerCount = $('#maintenanceWorkerCount .count'),
           $eggCount = $('#eggCount .count'),
           $populationCount = $('#populationCount .count'),
           $seasonCount = $('#seasonCount .count'),
@@ -135,6 +138,9 @@ $( document ).ready(function() {
       $queenCount.html(roundDown($hive.queenCount));
       $droneCount.html(roundDown($hive.droneCount));
       $workerCount.html(roundDown($hive.workerCount));
+      $honeyWorkerCount.html(roundDown($hive.honeyWorkerCount));
+      $territoryWorkerCount.html(roundDown($hive.territoryWorkerCount));
+      $maintenanceWorkerCount.html(roundDown($hive.maintenanceWorkerCount));
       $eggCount.html(roundDown($hive.eggCount) + ' (+' + roundToFirstDecimalPlace($hive.eggRate) + ')');
       $populationCount.html(roundDown($hive.population) + '/' + $hive.populationMax);
       $honeyCount.html(roundDown($hive.honey) + ' (+' + roundToFirstDecimalPlace($hive.honeyRate) + ')');
@@ -152,6 +158,17 @@ $( document ).ready(function() {
          $hive.experience = 0;
          $hive.experienceRequirement = ($expReq * 1.95);
          updateMessage('Your hive has hit level ' + $hive.level + '!');
+         if (($hive.level == 5) && ($hive.experience < 1)) {
+            $('#workerCount').remove();
+            mapBeeDataToDOM($honeyWorkerBee);
+            mapBeeDataToDOM($maintenanceWorkerBee);
+            mapBeeDataToDOM($territoryWorkerBee);
+            $hive.honeyWorkerCount = roundDown($hive.workerCount / 3.33);
+            $hive.territoryWorkerCount = roundDown($hive.workerCount / 3.33);
+            $hive.maintenanceWorkerCount = roundDown($hive.workerCount / 3.33);
+            $hive.workerCount = 0;
+            updateMessage('You\'ve unlocked specialist Workers! Your existing Workers have been converted. Good luck!')
+         }
       }
    }
    //util function to add experience for any rate addition - takes amount and cuts it down
@@ -203,15 +220,16 @@ $( document ).ready(function() {
    //this function used to update all finances based on bee activity per second
    function updateAllFinances() {
       var $levelDifficultyMultiplier = (Math.abs(($hive.level / 3) - 100) / 100);
+      $hive.healthRate = (($hive.workerCount * $workerBee.healthRate) + ($hive.maintenanceWorkerCount * $maintenanceWorkerBee.healthRate));
       //stuff affected by winter
       if ($game.season == 'Winter') {
-         $hive.healthRate = ((($hive.workerCount * $workerBee.healthRate) - ($hive.level * 0.25)) * $levelDifficultyMultiplier);
+         $hive.healthRate -= (($hive.level * 0.25) * $levelDifficultyMultiplier);
       }
       else {
-         $hive.healthRate = (($hive.workerCount * $workerBee.healthRate) * $levelDifficultyMultiplier);
+         $hive.healthRate = ($hive.healthRate * $levelDifficultyMultiplier);
       };
-      $hive.honeyRate = ($hive.workerCount * $workerBee.honeyRate);
-      $hive.territoryRate = ($hive.workerCount * $workerBee.territoryRate);
+      $hive.honeyRate = ($hive.workerCount * $workerBee.honeyRate) + ($hive.honeyWorkerCount * $honeyWorkerBee.honeyRate);
+      $hive.territoryRate = ($hive.workerCount * $workerBee.territoryRate) + ($hive.territoryWorkerCount * $territoryWorkerBee.territoryRate);
       $hive.eggRate = ($hive.droneCount * $droneBee.eggRate);
       updateHoney($hive.honeyRate);
       updateTerritory($hive.territoryRate);
@@ -235,6 +253,12 @@ $( document ).ready(function() {
                //check bee type and add appropriately
                if ($type == 'worker') {
                   $hive.workerCount += $amount;
+               } else if ($type == 'honeyWorker') {
+                  $hive.honeyWorkerCount += $amount;
+               } else if ($type == 'territoryWorker') {
+                  $hive.territoryWorkerCount += $amount;
+               } else if ($type == 'maintenanceWorker') {
+                  $hive.maintenanceWorkerCount += $amount;
                } else if ($type == 'drone') {
                   $hive.droneCount += $amount;
                } else if ($type == 'queen') {
@@ -333,10 +357,7 @@ $( document ).ready(function() {
       }
    }
 
-
-
    /////////////////////////////////////////////////////////////////////////
-
 
    //------master method use starts here
    //update all counters and finances on start
@@ -363,7 +384,6 @@ $( document ).ready(function() {
         applyHealthRepurcussions();
      }
    }
-
 
    //create a bee on button click
    $('.actions .button').on( "click", function() {
