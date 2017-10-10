@@ -1,6 +1,16 @@
 //this file to handle ui active states, show/hide, etc
 
+
 $( document ).ready(function() {
+
+   //init particles.js
+   /* particlesJS.load(@dom-id, @path-json, @callback (optional)); */
+   particlesJS.load('particles-js', 'assets/particles.json', function() {
+      console.log('callback - particles.js config loaded');
+   });
+
+   pJSDom[0].pJS.particles.number.value = 60;
+   pJSDom[0].pJS.fn.particlesRefresh();
 
    //remove the loading wrapper when document has loaded. delay slightly to guarantee safe to start game
    function removeLoadingWrapper() {

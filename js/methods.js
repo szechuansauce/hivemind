@@ -235,6 +235,7 @@ $( document ).ready(function() {
       $type = $this.data('beetype');
       $amount = $this.data('beeamount');
       $cost = $this.data('beecost');
+      $counter = $this.closest('.count-wrapper').find('.name');
       $message = $amount + ' ' + $type + ' created.';
       if ($cost && $amount && $type) {
          if ($hive.eggCount >= $amount) {
@@ -243,6 +244,10 @@ $( document ).ready(function() {
                   //subtract cost from honey
                   $hive.honey = ($hive.honey - $cost);
                   $hive.experience += $this.data('exp');
+                  //apply eye candy
+                  applyCandy($this, 'good');
+                  applyCandy($counter, 'good');
+                  console.log($counter);
                   //check bee type and add appropriately
                   if ($type == 'worker') {
                      $hive.workerCount += $amount;
@@ -416,6 +421,25 @@ $( document ).ready(function() {
          $territoryWorkerBee.availableAmounts = (checkBeeMutiplierAmounts($hive.honeyRate, $territoryWorkerBee.availableAmounts, $territoryWorkerBee.cost));
          compareAvailableAmounts($territoryWorkerBee.cachedAvailableAmounts, $territoryWorkerBee.availableAmounts, $territoryWorkerBee);
       }
+   }
+
+   //visual candy status changes
+   //three parmeters - target element (id), type (good, warning, bad), and timeout
+   function applyCandy(target, type, timeout=500) {
+      $target = $(target);
+      $target.addClass('candy');
+      if (type == 'warning') {
+         $target.addClass('warning');
+      } else if (type == 'bad') {
+         $target.addClass('bad');
+      } else {
+         $target.addClass('good');
+      }
+      setTimeout(removeCandy, timeout, $target);
+   }
+   function removeCandy(target) {
+      $target = $(target);
+      $target.removeClass('candy good bad warning');
    }
 
    /////////////////////////////////////////////////////////////////////////

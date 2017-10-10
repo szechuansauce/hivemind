@@ -9,6 +9,10 @@ highlight: #009688;
 white: #ffffff;
 */
 
+* {
+   transition: all 0s ease-out;
+}
+
 body {
    background: #F8F8F8;
    transition: background .5s ease-out;
@@ -255,4 +259,18 @@ body.paused #pauseMe {
      -ms-user-select: none; /* Internet Explorer/Edge */
           user-select: none; /* Non-prefixed version, currently
                                 supported by Chrome and Opera */
+}
+
+.candy {
+   border-radius: 3px;
+   color: white;
+}
+.good {
+   background: green;
+}
+.warning {
+   background: orange;
+}
+.bad {
+   background: red;
 }
