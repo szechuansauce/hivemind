@@ -248,6 +248,8 @@ $( document ).ready(function() {
                   applyCandy($this, 'good');
                   applyCandy($counter, 'good');
                   console.log($counter);
+                  //update particles
+                  updateBeeParticles();
                   //check bee type and add appropriately
                   if ($type == 'worker') {
                      $hive.workerCount += $amount;
@@ -282,6 +284,19 @@ $( document ).ready(function() {
       }
    }
 
+   //update bee particles
+   //if the number of bees in the hive is exactly divisible by 1000, add a new particle
+   //this keeps the maximum at around 80 (with the hive maxing at about 80,000 bees), to keep rendering intensity down
+   //i tried rendering 500 particles and my computer did not enjoy it
+   function updateBeeParticles() {
+      var $population = $hive.population;
+      var $particleCount = ($population / 1000);
+      pJSDom[0].pJS.particles.number.value = $particleCount;
+      if ($particleCount % 1000 == 0) {
+         pJSDom[0].pJS.fn.particlesRefresh();
+      }
+   }
+
    //compare a progress to a max, calc the percentage progress, add max-width to bar
    var $experienceBarInner = $('#experienceCount .progress-bar-inner');
    var $healthBarInner = $('#healthCount .progress-bar-inner');
@@ -289,7 +304,6 @@ $( document ).ready(function() {
    function generatePercentage(progress, maximum, target) {
       var $percentage = ((progress / maximum) * 100);
       var $percentageString = ($percentage + '%');
-      //target.css('max-width', '50%');
       target.css('max-width', $percentageString);
    }
    function generateAllPercentages() {
@@ -484,6 +498,5 @@ $( document ).ready(function() {
       $this = $(this);
       createBee($this);
    });
-
 
 });
